@@ -1,7 +1,26 @@
-export default function Board() {
+export default function Game() {
   const [isXTurn, setIsXTurn] = useState(true);
-  const [squares, setSquares] = useState(Array(9).fill(null));
+  const [history, setHistory] = useState([Array(9).fill(null)]);
+  const currentSquares = history[history.length - 1];
 
+  function handlePlay(nextSquares) {
+    setHistory([...history, nextSquares]);
+    setIsXTurn(!isXTurn);
+  }
+
+  return (
+    <div className="game">
+      <div className="game-board">
+        <Board isXTurn={isXTurn} squares={currentSquares} onPlay={handlePlay} />
+      </div>
+      <div className="game-info">
+        <ol>test</ol>
+      </div>
+    </div>
+  );
+}
+
+function Board({ isXTurn, squares, onPlay }) {
   let status;
   const winner = calculateWinner(squares);
   status = winner ? `Winner: ${winner}` : `Next player: ${isXTurn ? "X" : "O"}`;
@@ -13,8 +32,7 @@ export default function Board() {
 
     const nextSquares = squares.slice(0, 9);
     nextSquares[i] = isXTurn ? "X" : "O";
-    setSquares(nextSquares);
-    setIsXTurn(!isXTurn);
+    onPlay(nextSquares);
   }
 
   function calculateWinner(squares) {
